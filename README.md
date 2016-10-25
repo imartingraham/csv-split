@@ -19,11 +19,10 @@ Options:
 ## Installation
 
 1. Clone repository
-2. Install required gems:
+2. Install required gem:
 		
 	``` 
 	gem install trollop 
-	gem install csv
 	
 	```
 
