@@ -14,7 +14,6 @@ Options:
 
 ## Required Gems
 - trollop
-- csv
 
 ## Installation
 
