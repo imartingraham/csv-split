@@ -1,15 +1,20 @@
 #CSV Split
 
+Developed and tested on Ruby 2.4.0
+
 A ruby script that splits a large csv file into smaller files and stores the smaller files into the ```converted-files``` directory.
 
-This script has three parameters:
+This script has sevin (7) parameters:
 
 ```
 Options:
-                          --file-path, -f <s>:   Path to csv file to be split
-  --include-headers, --no-include-headers, -i:   Include headers in new files (default: true)
-                         --line-count, -l <i>:   Number of lines per file (default: 2500)
-                                   --help, -h:   Show this message
+	 --file-path  <path/name.cvs> 			   :    Path to csv file to be split
+     --new_file_name <path/name.cvs>   		   :	Allow user to change name of processed split files
+	 --include-headers, --no-include-headers   :    Include headers in new files (default: true)
+	 --line-count <number> 					   :	Number of lines per file (default: 2500)
+     --delimiter <delimiter>	   			   :    Allows user to change comma delimited to another Character
+     --remove_columns                          : 	After split it performed, loads remove.csv, creates 2nd directory process split files rmoving those columns
+     --help, -h:   Show this message
 ```
 
 ## Required Gems
@@ -24,7 +29,6 @@ Options:
 	gem install trollop 
 	
 	```
-
 
 ## Running the script
 
