@@ -20,6 +20,7 @@ opts = Optimist::options do
   opt :line_count, "Number of lines per file", default: 1, type: :integer #change default to 1
   opt :delimiter, "Charcter used for Col. Sep.", default: ',', type: :string #Add custom delimiter
 	opt :remove_columns, "Specify column names to be removed during processing in remove_coluns.txt", default: false, type: :boolean #Add Remove Column processing with remove.csv
+	opt :include_remainders, "Include remainder rows in the split files (default: false). Example: if there are 1030 rows in a csv file and will be split in 100 rows, the remaining 30 rows will be stored in a new file", default: false, type: :boolean
 end
 
 #Remind users to provide ARGVs at command-line
@@ -77,16 +78,22 @@ file_int = 0
 new_file_tmp = "#{split_path_name}/#{split_name}-%d.csv"
 new_file = sprintf new_file_tmp, file_int
 headers = [];
+csv_open_parameters = {headers: true, encoding: "UTF-8", quote_char: '"', col_sep: opts[:delimiter]}
 
-CSV.foreach(file, {headers: true, encoding: "UTF-8", quote_char: '"', col_sep: opts[:delimiter]}) do |row|
+# get the number of rows in the file for remainder checking
+row_total = CSV.foreach(file, csv_open_parameters).count
+
+# do the actual splitting
+CSV.foreach(file, csv_open_parameters) do |row|
 
   if opts[:include_headers] && headers.empty?
-    headers = row.to_hash.keys
-  end
-  col_data << row
-  if index % opts[:line_count] == 0
-    CSV.open(new_file, "wb", force_quotes: true) do |csv|
+		headers = row.to_hash.keys
+	end
 
+	col_data << row
+
+  if index % opts[:line_count] == 0 || (opts[:include_remainders] && index == row_total)
+    CSV.open(new_file, "wb", force_quotes: true) do |csv|
       if opts[:include_headers]
         csv << headers
       end
@@ -94,14 +101,13 @@ CSV.foreach(file, {headers: true, encoding: "UTF-8", quote_char: '"', col_sep: o
       col_data.each do |d|
         csv << d
       end
+		end
 
-
-    end
     file_int = file_int + 1
     new_file = sprintf new_file_tmp, file_int
     col_data = []
+	end
 
-  end
   index = index + 1
 end
 
